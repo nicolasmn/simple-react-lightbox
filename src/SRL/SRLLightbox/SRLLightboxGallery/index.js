@@ -11,7 +11,7 @@ import SRLLightboxSlideComponent from './SRLLightboxSlide'
 import SRLLightboxControls from './SRLLightboxControls'
 import fscreen from 'fscreen'
 import panzoom from 'panzoom'
-import createActivityDetector from 'activity-detector'
+// import createActivityDetector from 'activity-detector'
 import { SRLCtx } from '../../SRLContext'
 
 const _findIndex = require('lodash/findIndex')
@@ -326,34 +326,34 @@ const SRLLightboxGallery = ({
     }
   }, [])
 
-  function handleOnActive() {
-    if (hideControlsAfter !== 0) {
-      if (SRLStageRef.current !== null && SRLStageRef.current !== undefined) {
-        if (SRLStageRef.current.classList.contains('SRLIdle')) {
-          SRLStageRef.current.classList.remove('SRLIdle')
-        }
-      }
-    }
-  }
+  // function handleOnActive() {
+  //   if (hideControlsAfter !== 0) {
+  //     if (SRLStageRef.current !== null && SRLStageRef.current !== undefined) {
+  //       if (SRLStageRef.current.classList.contains('SRLIdle')) {
+  //         SRLStageRef.current.classList.remove('SRLIdle')
+  //       }
+  //     }
+  //   }
+  // }
 
-  function handleOnIdle() {
-    if (hideControlsAfter !== 0) {
-      if (SRLStageRef.current !== null && SRLStageRef.current !== undefined) {
-        SRLStageRef.current.classList.add('SRLIdle')
-      }
-    }
-  }
+  // function handleOnIdle() {
+  //   if (hideControlsAfter !== 0) {
+  //     if (SRLStageRef.current !== null && SRLStageRef.current !== undefined) {
+  //       SRLStageRef.current.classList.add('SRLIdle')
+  //     }
+  //   }
+  // }
 
-  function useIdle(options) {
-    useEffect(() => {
-      const activityDetector = createActivityDetector(options)
-      activityDetector.on('idle', handleOnIdle)
-      activityDetector.on('active', handleOnActive)
-      return () => activityDetector.stop()
-    }, [options])
-  }
+  // function useIdle(options) {
+  //   useEffect(() => {
+  //     const activityDetector = createActivityDetector(options)
+  //     activityDetector.on('idle', handleOnIdle)
+  //     activityDetector.on('active', handleOnActive)
+  //     return () => activityDetector.stop()
+  //   }, [options])
+  // }
 
-  useIdle({ timeToIdle: hideControlsAfter, ignoredEventsWhenIdle: [] })
+  // useIdle({ timeToIdle: hideControlsAfter, ignoredEventsWhenIdle: [] })
 
   // This useEffect should only run once!
   useEffect(() => {

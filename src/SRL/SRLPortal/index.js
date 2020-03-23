@@ -12,7 +12,10 @@ const Portal = ({ isOpened, selector, children, className }) => {
   if (!isOpened || selector === undefined) {
     return null
   }
-  return ReactDOM.createPortal(modalMarkup, document.body)
+  return ReactDOM.createPortal(
+    modalMarkup,
+    typeof document !== 'undefined' && document.body
+  )
 }
 
 export default Portal
