@@ -104,6 +104,12 @@ const SRLWrapper = ({
   // Loop through the elements or the links to add them to the context
   const handleElementsWithContext = useCallback(
     (array, elementType) => {
+      const getCaption = element => {
+        const figure = element.closest('figure')
+        const figcaption = figure && figure.querySelector('figcaption')
+        return figcaption ? figcaption.innerHTML : null
+      }
+
       const elements = array.map((e, index) => {
         // If the images is loaded and not broken
         // Also checks if the image is a Base64 image
@@ -128,7 +134,8 @@ const SRLWrapper = ({
               : e.img.parentElement.href || e.img.currentSrc || null,
             // Grabs the "alt" attribute from the image or the "textContent" from the video.
             // If it's a link grabs the "alt" attribute from the children image.
-            caption: e.img.alt || e.img.textContent || null,
+            caption:
+              getCaption(e.img) || e.img.alt || e.img.textContent || null,
             // Grabs the newly created "id" attribute from the image/video
             // If it's a link grabs the "id" attribute from the children image.
             id: e.img.id || null,
