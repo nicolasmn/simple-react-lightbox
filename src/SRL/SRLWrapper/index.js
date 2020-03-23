@@ -1,4 +1,10 @@
-import React, { useContext, useRef, useEffect, useState } from 'react'
+import React, {
+  useContext,
+  useRef,
+  useEffect,
+  useState,
+  useCallback
+} from 'react'
 import PropTypes from 'prop-types'
 import { SRLCtx } from '../SRLContext'
 import imagesLoaded from 'imagesLoaded'
@@ -17,6 +23,9 @@ const SRLWrapper = ({
   // Add a state to check if the event listener is set
   const [listenerIsSet, setListenerIsSet] = useState(false)
 
+  const [collectedElements, setCollectedElements] = useState([])
+  const [collectedDataAttributes, setCollectedDataAttributes] = useState([])
+
   const [imagesAreLoaded, setImagesAreLoaded] = useState(false)
 
   // Imports the context
@@ -25,9 +34,9 @@ const SRLWrapper = ({
   // Sets a new Ref which will be used to target the div with the images
   const imagesContainer = useRef(null)
 
-  useEffect(() => {
-    // Dispatch the Action to grab the options
-    const grabSettings = (options, callbacks) => {
+  // Dispatch the Action to grab the options
+  const grabSettings = useCallback(
+    (options, callbacks) => {
       // console.log('dispatched options')
       // We merge the settings that we receive from the user via the props with the original ones (defaultOptions and defaultCallbacks)
       // If the user hasn't provided any options/callbacks via props we make mergedSettings use just the default options/callbacks
@@ -59,10 +68,13 @@ const SRLWrapper = ({
           mergedSettings
         })
       }
-    }
+    },
+    [context, defaultOptions, defaultCallbacks, isEmpty, isEqual]
+  )
 
-    // Dispatch the Action the grab the elements
-    const grabElements = elements => {
+  // Dispatch the Action the grab the elements
+  const grabElements = useCallback(
+    elements => {
       if (!isEqual(elements, context.elements)) {
         // console.log('dispatched grab elements')
         context.dispatch({
@@ -70,10 +82,13 @@ const SRLWrapper = ({
           elements
         })
       }
-    }
+    },
+    [context, isEqual]
+  )
 
-    // Dispatch the Action to handle the clicked item
-    const handleElement = element => {
+  // Dispatch the Action to handle the clicked item
+  const handleElement = useCallback(
+    element => {
       // We don't want to dispatch the action if the selected image is already selected
       if (!isEqual(element, context.selectedElement)) {
         // console.log('dispatched grab element (single)')
@@ -82,31 +97,13 @@ const SRLWrapper = ({
           element
         })
       }
-    }
+    },
+    [context, isEqual]
+  )
 
-    // // Generate a canvas with a frame from the video
-    // function capture(video) {
-    //   const scaleFactor = 1
-    //   var w = video.videoWidth * scaleFactor
-    //   var h = video.videoHeight * scaleFactor
-    //   var canvas = document.createElement('canvas')
-    //   canvas.width = w
-    //   canvas.height = h
-    //   var ctx = canvas.getContext('2d')
-    //   ctx.drawImage(video, 0, 0, w, h)
-    //   return canvas
-    // }
-
-    // // Takes the dataUrl from the canvas
-    // function generateScreen(element) {
-    //   var video = element
-    //   var canvas = capture(video)
-    //   const dataUrl = canvas.toDataURL()
-    //   return dataUrl
-    // }
-
-    // Loop through the elements or the links to add them to the context
-    const handleElementsWithContext = (array, elementType) => {
+  // Loop through the elements or the links to add them to the context
+  const handleElementsWithContext = useCallback(
+    (array, elementType) => {
       const elements = array.map((e, index) => {
         // If the images is loaded and not broken
         // Also checks if the image is a Base64 image
@@ -164,11 +161,14 @@ const SRLWrapper = ({
       setListenerIsSet(true)
       // Use filter to remove the undefined values
       grabElements(elements.filter(e => e !== undefined))
-    }
+    },
+    [grabElements, handleElement]
+  )
 
-    // Check if the images are loaded using "imagesLoaded" by Desandro (LOVE)
-    // When te images are loaded set the state to TRUE and run the function to handle the context
-    function handleLoadedImages(array, elementsAreLinks) {
+  // Check if the images are loaded using "imagesLoaded" by Desandro (LOVE)
+  // When te images are loaded set the state to TRUE and run the function to handle the context
+  const handleLoadedImages = useCallback(
+    (array, elementsAreLinks) => {
       imagesLoaded(array, function(instance) {
         // Checks if the element (the first one) is an image or a link. If it's a link, the user is using the gallery
         // And we need to grab the correct source of the image, not the thumbnail
@@ -180,16 +180,27 @@ const SRLWrapper = ({
           }
         }
       })
-    }
+    },
+    [imagesAreLoaded, handleElementsWithContext]
+  )
 
+  useEffect(() => {
+    setListenerIsSet(false)
+  }, [collectedElements, collectedDataAttributes])
+
+  useEffect(() => {
     // Grabs the options set by the user first
     grabSettings(options, callbacks)
     // Grabs images and videos (REMOVES videos for now)
-    const collectedElements = imagesContainer.current.querySelectorAll('img')
+    setCollectedElements([...imagesContainer.current.querySelectorAll('img')])
     // Grabs data attributes (in links)
-    const collectedDataAttributes = imagesContainer.current.querySelectorAll(
-      "a[data-attribute='SRL']"
-    )
+    setCollectedDataAttributes([
+      ...imagesContainer.current.querySelectorAll("a[data-attribute='SRL']")
+    ])
+  }, [options, callbacks, grabSettings])
+
+  useEffect(() => {
+    if (!collectedDataAttributes.length && !collectedElements.length) return
 
     // Set "listenerIsSet" so that we know that the event listener is only set ONCE
     if (!listenerIsSet) {
@@ -207,15 +218,11 @@ const SRLWrapper = ({
       }
     }
   }, [
-    options,
-    isEqual,
-    context,
-    isEmpty,
-    defaultOptions,
+    collectedElements,
+    collectedDataAttributes,
+    handleLoadedImages,
     listenerIsSet,
-    imagesAreLoaded,
-    defaultCallbacks,
-    callbacks
+    handleElement
   ])
 
   return <div ref={imagesContainer}>{children}</div>
