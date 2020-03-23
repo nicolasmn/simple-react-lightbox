@@ -8,7 +8,6 @@ const SRLLightboxGalleryStage = styled.div`
   height: 100%;
   top: 0;
   left: 0;
-  z-index: 9991;
 `
 
 // The content of the light-box
@@ -65,6 +64,10 @@ const SRLLightboxElementContainer = styled.div`
     }
   }};
   position: relative;
+  -webkit-pointer-events: none;
+  -moz-pointer-events: none;
+  -ms-pointer-events: none;
+  pointer-events: none;
   @media (max-width: 768px) {
     width: 100vw;
     height: ${props => (props.showThumbnails ? '70vh' : '80vh')};
@@ -134,9 +137,12 @@ const SRLLightboxImage = styled.img`
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  -webkit-pointer-events: all;
+  -moz-pointer-events: all;
+  -ms-pointer-events: all;
+  pointer-events: all;
   transition: all 200ms ease;
   opacity: 1;
-  margin: auto;
   position: absolute;
   top: 50%;
   left: 50%;

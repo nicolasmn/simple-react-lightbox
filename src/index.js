@@ -19,10 +19,9 @@ const SimpleReactLightbox = ({ children }) => {
             }
             &.SRLOpened {
               overflow: hidden;
-              /* Compensate for the scrollbar when overflow is hidden */
-              margin-right: 15px;
               #SRLLightbox {
                 position: absolute;
+                z-index: 9991;
                 width: 100%;
                 height: 100%;
                 top: 0;
