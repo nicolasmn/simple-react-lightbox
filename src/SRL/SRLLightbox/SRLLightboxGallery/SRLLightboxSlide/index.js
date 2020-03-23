@@ -158,7 +158,10 @@ function SRLLightboxSlideComponent({
           captionStyle={captionOptions}
           className="SRLCaption"
         >
-          <p className="SRLCaption">{caption}</p>
+          <p
+            className="SRLCaption"
+            dangerouslySetInnerHTML={{ __html: caption }}
+          />
         </SRRLLightboxCaption>
       )}
 
