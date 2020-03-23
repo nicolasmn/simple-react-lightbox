@@ -4,7 +4,7 @@
   "description": "A simple but functional light-box for React.",
   "author": "michelecocuccio",
   "license": "MIT",
-  "repository": "michelecocuccio/simple-react-lightbox",
+  "repository": "nicolasmn/simple-react-lightbox",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
