@@ -209,12 +209,6 @@ const SRLWrapper = ({
         handleLoadedImages(collectedElements)
       } else if (collectedDataAttributes.length > 0) {
         handleLoadedImages(collectedDataAttributes)
-        // Throws a warning if the number of links is not equal to the number of images
-        if (collectedDataAttributes.length !== collectedElements.length) {
-          console.warn(
-            `HEY!. You have ${collectedDataAttributes.length} links and ${collectedElements.length} images. You likely forgot to add the data-attribute="SRL" to one of your link wrapping your image!`
-          )
-        }
       }
     }
   }, [
